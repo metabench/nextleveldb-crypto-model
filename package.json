@@ -1,0 +1,22 @@
+{
+  "name": "nextleveldb-crypto-model",
+  "main": "nextleveldb-crypto-model.js",
+  "license": "MIT",
+  "dependencies": {
+    "jsgui3": "0.0.7",
+    "xas2": "^0.0.9",
+    "binary-encoding": "^0.0.28",
+    "nextleveldb-model": "^0.0.3",
+    "coinmarketcap-watcher": "0.0.1"
+  },
+  "engines": {
+    "node": ">=7.0.0"
+  },
+  "description": "NextLevelDB Cryptocurrencies Model Database",
+  "author": "James Vickers <james@metabench.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metabench/nextleveldb-crypto-model.git"
+  },
+  "version": "0.0.1"
+}
