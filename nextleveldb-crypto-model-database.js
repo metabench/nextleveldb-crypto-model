@@ -5,6 +5,8 @@ var CoinMarketCap_Watcher = require('coinmarketcap-watcher');
 
 var each = jsgui.each;
 var tof = jsgui.tof;
+var Fns = jsgui.Fns;
+
 var Database = Model.Database;
 var Table = Model.Table;
 var Record = Model.Record;
@@ -298,8 +300,13 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
     }
 
     config_all_bittrex(callback) {
+        //console.log('config_all_bittrex');
         var bw = new Bittrex_Watcher();
         var crypto_db = this;
+
+        //this.view_decoded_rows();
+        //throw 'stop';
+
         bw.get_at_all_currencies_info((err, at_all_currencies) => {
             //console.log('at_all_currencies', at_all_currencies);
             // then want to select the top 25 of these by symbols (Currency)
@@ -386,6 +393,75 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
                 }
             })
         })
+    }
+
+    ensure_table_records_no_overwrite(table_name, arr_records) {
+        var table = this.map_tables[table_name];
+
+        // Don't overwrite the keys or the values
+        table.ensure_records_no_overwrite(arr_records);
+    }
+
+    download_ensure_bittrex_currencies(callback) {
+        // 
+
+        // Ensures the currencies within the model.
+
+
+
+        var bw = new Bittrex_Watcher();
+        //bw.get_at_all_currencies_info();
+
+        /*
+        Fns([
+            [bw.get_at_all_currencies_info, bw, []]//,
+            //[bw.get_at_all_markets_info, bw, []],
+        ]).go((err, res_all) => {
+            var [at_currencies, at_markets] = res_all;
+            console.log('at_currencies.length', at_currencies.length);
+            console.log('at_markets.length', at_markets.length);
+
+        })
+        */
+        var that = this;
+
+        bw.get_at_all_currencies_info((err, at_c) => {
+            if (err) { callback(err); } else {
+                console.log('at_c.length', at_c.length);
+                console.log('at_c.keys', at_c.keys);
+
+                that.ensure_table_records_no_overwrite('bittrex currencies', at_c.values);
+
+
+
+                // Then put records / ensure records.
+                //  Ensure will have the option of changing the values 
+
+                // ensuring records, meaning if they are already there, then don't put them.
+                //  No overwrite
+
+
+
+            }
+        });
+    }
+
+    ensure_bittrex_currency(kv_currency) {
+        var tbl_c = this.map_tables['bittrex currencies'];
+
+        // Have a map of the record's keys within the table records.
+        //  That's not the normal indexing system.
+
+        tbl_c.key_lookup
+    }
+
+    ensure_bittrex_currencies(arr_currencies) {
+        // for each of them, try to get them by key from the model (this)
+
+        each(arr_currencies, (kv_currency) => {
+
+        })
+
     }
 
     'get_bittrex_market_summary_records_filtered_by_market_name'(arr_market_names, callback) {
@@ -555,6 +631,32 @@ if (require.main === module) {
         });
         console.log('\n\n\n');
     }
+    //view_decoded_rows();
+
+    var test_remodel = () => {
+        var model_rows = crypto_db.get_model_rows();
+        each(model_rows, (model_row) => {
+            console.log('1) model_row', Database.decode_model_row(model_row));
+        });
+
+        var buf = crypto_db.get_model_rows_encoded();
+
+
+
+        console.log('buf', buf);
+
+        var m2 = Model.Database.load_buf(buf);
+        var model_rows_2 = m2.get_model_rows();
+        each(model_rows_2, (model_row) => {
+            console.log('2) model_row', Database.decode_model_row(model_row));
+        });
+
+        crypto_db.view_decoded_rows();
+
+
+
+    }
+    test_remodel();
 
     // view tables index info.
     //  go through each table, get info on which fields index how.
@@ -600,10 +702,20 @@ if (require.main === module) {
 
             }
         })
-
-
     }
-    test_with_crypto_data();
+    //test_with_crypto_data();
+
+    // The model table gets put together with two pk fields on 
+
+
+    var pk_c = crypto_db.map_tables['bittrex currencies'].record_def.pk;
+    //console.log('pk_c.length', pk_c.length);
+
+    var pk_m = crypto_db.map_tables['bittrex markets'].record_def.pk;
+    //console.log('pk_m.length', pk_m.length);
+
+    //console.log('pk_c', pk_c);
+
 
     // Can have more functions to plug it into a live database.
     //  Model transferring.
