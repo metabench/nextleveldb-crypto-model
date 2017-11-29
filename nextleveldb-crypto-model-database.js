@@ -1,11 +1,11 @@
 var Model = require('nextleveldb-model');
-var jsgui = require('jsgui3');
+var lang = require('lang-mini');
 var CoinMarketCap_Watcher = require('coinmarketcap-watcher');
 
 
-var each = jsgui.each;
-var tof = jsgui.tof;
-var Fns = jsgui.Fns;
+var each = lang.each;
+var tof = lang.tof;
+var Fns = lang.Fns;
 
 var Database = Model.Database;
 var Table = Model.Table;
@@ -361,7 +361,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
                     var map_ids_by_currency = tbl_bittrex_currencies.get_map_lookup('Currency');
                     //console.log('map_ids_by_currency', map_ids_by_currency);
                     var arr_markets_records = [];
-                    var arr_market_names = [];
+                    //var arr_market_names = [];
 
                     each(at_markets_info.values, (v) => {
                         //console.log('v', v);
@@ -369,7 +369,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
                         var str_base_currency = v[1];
 
                         //arr_market_names.push(str_market_currency + '-' + str_base_currency);
-                        arr_market_names.push(str_base_currency + '-' + str_market_currency);
+                        //arr_market_names.push(str_base_currency + '-' + str_market_currency);
                         
                         var market_currency_key = map_ids_by_currency[str_market_currency];
                         var base_currency_key = map_ids_by_currency[str_base_currency];
@@ -395,12 +395,44 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
         })
     }
 
-    ensure_table_records_no_overwrite(table_name, arr_records) {
-        var table = this.map_tables[table_name];
+    
 
-        // Don't overwrite the keys or the values
-        table.ensure_records_no_overwrite(arr_records);
-    }
+
+    // Need more clarity about steps:
+    //  Remote db -> model, download -> model, model -> remote db
+
+    // A standard process where it loads a set of data / gets given it (from existing db), then it downloads the set of data fresh, then it sees which records are
+    //  missing or changed. It then persists that data to the remote NextLevelDB.
+
+    // Load_Update_Persist
+    // Load_Augment_Persist
+    // Load_Download_Persist
+    // Load_Process_Persist
+    // Load_Process_Save
+
+    // Load, process, save looks like a decent standard or API to work with.
+
+    // Could define various load process save functions.
+
+    // LPS bittrex currencies.
+    //  These should maybe not be here. Maybe just process.
+
+    // Load within the thing that has the model, gives the model rows to load or add.
+    //  Load records to model, check they don't already exist.
+
+    // 2 sets of records would be added to the model, and model functionality used to merge them effectively. Prevents sending unnecessary updates, get to observe
+    //  what some updates are.
+
+
+
+
+
+
+
+    
+
+    // Possibly first step is to load this data up from the server.
+    //  Then ensure the records that arrive.
 
     download_ensure_bittrex_currencies(callback) {
         // 
@@ -427,18 +459,32 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
 
         bw.get_at_all_currencies_info((err, at_c) => {
             if (err) { callback(err); } else {
-                console.log('at_c.length', at_c.length);
-                console.log('at_c.keys', at_c.keys);
+                //console.log('at_c.length', at_c.length);
+                //console.log('at_c.keys', at_c.keys);
 
                 that.ensure_table_records_no_overwrite('bittrex currencies', at_c.values);
 
 
 
                 // Then put records / ensure records.
-                //  Ensure will have the option of changing the values 
+                //  Ensure will have the option of changing the values
+
+
+
 
                 // ensuring records, meaning if they are already there, then don't put them.
                 //  No overwrite
+
+                // Having done that in the Model, we want to ensure these records from the model are in the database.
+                
+                // Could have another check to see that it does not overwrite any of the data in the database.
+
+                // Anyway, persist the bittrex currencies table to the db.
+                //  But that does not happen in the model.
+
+
+                
+
 
 
 
@@ -638,12 +684,17 @@ if (require.main === module) {
         each(model_rows, (model_row) => {
             console.log('1) model_row', Database.decode_model_row(model_row));
         });
+        
+
 
         var buf = crypto_db.get_model_rows_encoded();
 
 
 
         console.log('buf', buf);
+
+        // Looks like the loading of the model rows does not work correctly?
+        //  Actually, it's the definition of the table that gets created wrong because it does not also assign it the 4th incrementor.
 
         var m2 = Model.Database.load_buf(buf);
         var model_rows_2 = m2.get_model_rows();
