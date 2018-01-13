@@ -4,7 +4,7 @@
     "license": "MIT",
     "dependencies": {
         "binary-encoding": "^0.0.33",
-        "bittrex-watcher": "^0.0.3",
+        "bittrex-watcher": "^0.0.5",
         "coinmarketcap-watcher": "0.0.1",
         "lang-mini": "^0.0.2",
         "nextleveldb-model": "^0.0.14",
