@@ -46,6 +46,20 @@ var table_defs = [
             // Need to be able to look these up. Need to know what field id each of them is.
             '!Currency',
             '!CurrencyLong',
+            // Also while putting or ensuring records, need to ensure unique constraints.
+
+            // Check if the table has records according to indexes.
+            //  Find records by indexes.
+            //  Only low level puts will automatically do overwrites.
+
+            // Want index lookup and index lookups where we look up multiple at once.
+            
+
+
+
+
+
+
             'MinConfirmation',
             'TxFee',
             'IsActive',
