@@ -12,24 +12,23 @@ var Table = Model.Table;
 var Record = Model.Record;
 
 // watcher vs more simple API?
-
-
-
 var Bittrex_Watcher = require('bittrex-watcher');
-
-
 // Want an easy output of the model
 //  Explanation of the tables, indexes, fields
-
 
 var table_defs = [
     [
         'market providers', [
-        [
-            ['+id'], ['name']
-        ],
-        [
-            [['name'], ['id']]]
+            [
+                ['+id'],
+                ['name']
+            ],
+            [
+                [
+                    ['name'],
+                    ['id']
+                ]
+            ]
         ]
     ],
 
@@ -40,6 +39,11 @@ var table_defs = [
 
     [
         'bittrex currencies', [
+
+            // id is an autoincrementing number.
+            //  automatically storing the id type makes the most sense.
+
+
             '+id',
             // And the unique constraints as well.
 
@@ -53,9 +57,6 @@ var table_defs = [
             //  Only low level puts will automatically do overwrites.
 
             // Want index lookup and index lookups where we look up multiple at once.
-            
-
-
 
 
 
@@ -105,7 +106,8 @@ var table_defs = [
                 'Created',
                 'Notice',
                 'IsSponsored',
-                'LogoUrl']
+                'LogoUrl'
+            ]
         ]
     ],
 
@@ -113,22 +115,23 @@ var table_defs = [
     //  more logical than another primary key.
 
     [
-        'bittrex market summary snapshots',
-        [
+        'bittrex market summary snapshots', [
             //'+id',
 
             // Define this here as a foreign key field?
             //  And the market id is an array of 2 values.
             ['market_id fk=> bittrex markets',
-            'timestamp'],
+                'timestamp'
+            ],
 
             ['last',
-            'bid',
-            'ask',
-            'volume',
-            'base_volume',
-            'open_buy_orders',
-            'open_sell_orders']
+                'bid',
+                'ask',
+                'volume',
+                'base_volume',
+                'open_buy_orders',
+                'open_sell_orders'
+            ]
         ]
 
         // Then would need to have some way to transform the incoming rows into the values for the records.
@@ -153,14 +156,16 @@ var table_defs = [
 
 
 class NextlevelDB_Crypto_Model_Database extends Model.Database {
-    'constructor'() {
+    'constructor' () {
         super(table_defs);
     }
-    'config_top_bittrex'(n, callback) {
+    'config_top_bittrex' (n, callback) {
         var cmcw = new CoinMarketCap_Watcher();
         var crypto_db = this;
         cmcw.get_top_n_symbols_by_market_cap(n, (err, arr_top_25_symbols) => {
-            if (err) { callback(err) } else {
+            if (err) {
+                callback(err)
+            } else {
                 //console.log('arr_top_25_symbols', arr_top_25_symbols);
                 // then get the bittrex ticker
                 var bw = new Bittrex_Watcher();
@@ -190,13 +195,17 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
                     //  will then lookup bittrex markets for these markets
                     // 
                     bw.get_arr_market_names_by_arr_currencies(bittrex_top_currency_symbols, (err, btx_top_market_names) => {
-                        if (err) { callback(err); } else {
+                        if (err) {
+                            callback(err);
+                        } else {
                             //console.log('btx_top_market_names', btx_top_market_names);
 
                             // Then with these market names, we get the market info, filetered by these market names
 
                             bw.get_markets_info_by_market_names(btx_top_market_names, (err, at_top_markets_info) => {
-                                if (err) { callback(err); } else {
+                                if (err) {
+                                    callback(err);
+                                } else {
                                     // transform it to follow the fields.
                                     //console.log('at_top_markets_info', at_top_markets_info);
                                     //console.log('at_top_markets_info.length', at_top_markets_info.length);
@@ -231,7 +240,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
 
                                         //arr_market_names.push(str_market_currency + '-' + str_base_currency);
                                         arr_market_names.push(str_base_currency + '-' + str_market_currency);
-                                        
+
                                         var market_currency_key = map_ids_by_currency[str_market_currency];
                                         var base_currency_key = map_ids_by_currency[str_base_currency];
 
@@ -242,7 +251,9 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
                                         //console.log('base_currency_id', base_currency_id);
 
                                         // then reconstruct the record. We need the right fields for the record.
-                                        var record_def = [[market_currency_id, base_currency_id], v.slice(4)];
+                                        var record_def = [
+                                            [market_currency_id, base_currency_id], v.slice(4)
+                                        ];
 
                                         arr_markets_records.push(record_def);
                                         // then we have the base currency key values...
@@ -349,7 +360,9 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
             // 
 
             bw.get_markets_info((err, at_markets_info) => {
-                if (err) { callback(err); } else {
+                if (err) {
+                    callback(err);
+                } else {
                     // transform it to follow the fields.
                     //console.log('at_top_markets_info', at_top_markets_info);
                     //console.log('at_top_markets_info.length', at_top_markets_info.length);
@@ -384,7 +397,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
 
                         //arr_market_names.push(str_market_currency + '-' + str_base_currency);
                         //arr_market_names.push(str_base_currency + '-' + str_market_currency);
-                        
+
                         var market_currency_key = map_ids_by_currency[str_market_currency];
                         var base_currency_key = map_ids_by_currency[str_base_currency];
 
@@ -395,7 +408,9 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
                         //console.log('base_currency_id', base_currency_id);
 
                         // then reconstruct the record. We need the right fields for the record.
-                        var record_def = [[market_currency_id, base_currency_id], v.slice(4)];
+                        var record_def = [
+                            [market_currency_id, base_currency_id], v.slice(4)
+                        ];
 
                         arr_markets_records.push(record_def);
                         // then we have the base currency key values...
@@ -409,7 +424,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
         })
     }
 
-    
+
 
 
     // Need more clarity about steps:
@@ -443,7 +458,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
 
 
 
-    
+
 
     // Possibly first step is to load this data up from the server.
     //  Then ensure the records that arrive.
@@ -472,7 +487,9 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
         var that = this;
 
         bw.get_at_all_currencies_info((err, at_c) => {
-            if (err) { callback(err); } else {
+            if (err) {
+                callback(err);
+            } else {
                 //console.log('at_c.length', at_c.length);
                 //console.log('at_c.keys', at_c.keys);
 
@@ -490,14 +507,14 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
                 //  No overwrite
 
                 // Having done that in the Model, we want to ensure these records from the model are in the database.
-                
+
                 // Could have another check to see that it does not overwrite any of the data in the database.
 
                 // Anyway, persist the bittrex currencies table to the db.
                 //  But that does not happen in the model.
 
 
-                
+
 
 
 
@@ -524,7 +541,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
 
     }
 
-    'get_bittrex_market_summary_records_filtered_by_market_name'(arr_market_names, callback) {
+    'get_bittrex_market_summary_records_filtered_by_market_name' (arr_market_names, callback) {
         var map_ids_by_market = tbl_bittrex_markets.get_map_lookup('MarketName');
         //console.log('map_ids_by_market', map_ids_by_market);
 
@@ -536,11 +553,13 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
 
         // Don't need to add the market summaries here.
         //  Could just get (bittrex) market summary records.
-        
+
         // Could have a number of getter functions for different exchanges all organised.
 
         bw.get_market_summaries_filter_by_arr_market_names(arr_market_names, (err, at_market_summaries) => {
-            if (err) { callback(err); } else {
+            if (err) {
+                callback(err);
+            } else {
                 //console.log('at_market_summaries', at_market_summaries);
 
                 // Then compose those market summaries into db records.
@@ -578,8 +597,11 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
                     //console.log('tof(d)', tof(d));
                     //console.log('d', d);
                     //var i_d = d.getTime();
-                    
-                    var res = [[market_key, d], [value[4], value[7], value[8], value[3], value[5], value[9], value[10]]];
+
+                    var res = [
+                        [market_key, d],
+                        [value[4], value[7], value[8], value[3], value[5], value[9], value[10]]
+                    ];
 
                     /*
                     ['market_id fk=> bittrex markets',
@@ -631,7 +653,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
 
                 // Will want to do that frequently too.
                 //  The database client could be useful for this.
-                
+
                 // Worth being able to send update packets...
                 //  This is probably enough work for this model here.
 
@@ -698,7 +720,7 @@ if (require.main === module) {
         each(model_rows, (model_row) => {
             console.log('1) model_row', Database.decode_model_row(model_row));
         });
-        
+
 
 
         var buf = crypto_db.get_model_rows_encoded();
@@ -734,7 +756,7 @@ if (require.main === module) {
     // 09/10/2017 - So the indexes on this table have not been set up properly.
     //  Need to be loaded with their key fields and value fields.
     //console.log('tbl_bittrex_currencies.record_def.indexes', tbl_bittrex_currencies.record_def.indexes);
-    
+
 
 
     add_some_crypto_data = (callback) => {
@@ -745,7 +767,7 @@ if (require.main === module) {
         // bittrex currencies.
         //  see if we can get the top 10.
         // use coinmarket cap to get top 25 coins.
-        
+
     }
 
     var test_with_crypto_data = () => {
@@ -755,7 +777,9 @@ if (require.main === module) {
 
         // crypto_db.config_top_bittrex(25, (err, res_config) => {
         crypto_db.config_all_bittrex((err, res_config) => {
-            if (err) { throw err; } else {
+            if (err) {
+                throw err;
+            } else {
                 console.log('res_config', res_config);
                 view_decoded_rows();
 
@@ -785,7 +809,7 @@ if (require.main === module) {
     // Can have more functions to plug it into a live database.
     //  Model transferring.
     //  Deleting and replacing the remote db.
-    
+
 
 
 } else {
