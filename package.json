@@ -7,8 +7,8 @@
         "bittrex-watcher": "^0.0.5",
         "coinmarketcap-watcher": "0.0.4",
         "lang-mini": "^0.0.2",
-        "nextleveldb-model": "^0.0.17",
-        "xas2": "^0.0.11"
+        "nextleveldb-model": "^0.0.19",
+        "xas2": "^0.0.12"
     },
     "engines": {
         "node": ">=9.3.0"
@@ -19,5 +19,5 @@
         "type": "git",
         "url": "https://github.com/metabench/nextleveldb-crypto-model.git"
     },
-    "version": "0.0.12"
+    "version": "0.0.13"
 }
