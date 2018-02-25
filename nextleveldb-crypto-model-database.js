@@ -16,6 +16,12 @@ var Bittrex_Watcher = require('bittrex-watcher');
 // Want an easy output of the model
 //  Explanation of the tables, indexes, fields
 
+
+// Maybe this will be retired, but with the definitions used and stored separately, with other components providing much of the legwork to ensure the data is in the DB, and the structure is set up.
+
+
+
+
 var table_defs = [
     [
         'market providers', [
