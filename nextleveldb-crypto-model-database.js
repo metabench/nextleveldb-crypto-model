@@ -84,6 +84,9 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
     'constructor' () {
         super(table_defs);
     }
+
+
+
     'config_top_bittrex' (n, callback) {
         var cmcw = new CoinMarketCap_Watcher();
         var crypto_db = this;
