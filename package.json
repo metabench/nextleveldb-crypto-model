@@ -3,12 +3,12 @@
     "main": "nextleveldb-crypto-model.js",
     "license": "MIT",
     "dependencies": {
-        "binary-encoding": "^0.0.49",
+        "binary-encoding": "^0.0.53",
         "bittrex-watcher": "^0.0.5",
         "coinmarketcap-watcher": "0.0.4",
         "lang-mini": "^0.0.5",
-        "nextleveldb-model": "^0.0.43",
-        "xas2": "^0.0.16"
+        "nextleveldb-model": "^0.0.47",
+        "xas2": "^0.0.17"
     },
     "engines": {
         "node": ">=9.3.0"
@@ -19,5 +19,5 @@
         "type": "git",
         "url": "https://github.com/metabench/nextleveldb-crypto-model.git"
     },
-    "version": "0.0.21"
+    "version": "0.0.22"
 }
