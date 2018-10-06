@@ -18,9 +18,9 @@ var Bittrex_Watcher = require('bittrex-watcher');
 
 
 // Maybe this will be retired, but with the definitions used and stored separately, with other components providing much of the legwork to ensure the data is in the DB, and the structure is set up.
+//  Yes, retire it with nextleveldb-fin-client
 
-
-
+// The exclamation marks indicate the field is unique here, but what I think they do is make an index.
 
 var table_defs = [
     [
@@ -38,9 +38,15 @@ var table_defs = [
         ]
     ],
 
+    // Both plus and exclamation marks here.
+    //  Exclamation mark implies its unique.
+
     [
         'bittrex currencies', [
             '+id',
+
+            // Just indexed here, but these should be unique indexes.
+            //  
             '!Currency',
             '!CurrencyLong',
             'MinConfirmation',
@@ -81,13 +87,13 @@ var table_defs = [
     ]
 ]
 class NextlevelDB_Crypto_Model_Database extends Model.Database {
-    'constructor' () {
+    'constructor'() {
         super(table_defs);
     }
 
 
 
-    'config_top_bittrex' (n, callback) {
+    'config_top_bittrex'(n, callback) {
         var cmcw = new CoinMarketCap_Watcher();
         var crypto_db = this;
         cmcw.get_top_n_symbols_by_market_cap(n, (err, arr_top_25_symbols) => {
@@ -202,7 +208,7 @@ class NextlevelDB_Crypto_Model_Database extends Model.Database {
         });
     }
 
-    'get_bittrex_market_summary_records_filtered_by_market_name' (arr_market_names, callback) {
+    'get_bittrex_market_summary_records_filtered_by_market_name'(arr_market_names, callback) {
         var map_ids_by_market = tbl_bittrex_markets.get_map_lookup('MarketName');
 
         bw.get_market_summaries_filter_by_arr_market_names(arr_market_names, (err, at_market_summaries) => {
